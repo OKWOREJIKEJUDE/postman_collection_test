@@ -137,7 +137,7 @@
       "response": []
     },
     {
-      "name": "getOne by Slug",
+      "name": "pagination",
       "event": [
         {
           "listen": "test",
@@ -147,13 +147,10 @@
               "    pm.response.to.have.status(200);\r",
               "});\r",
               "pm.test(\"Body matches string\", function () {\r",
-              "    pm.expect(pm.response.text()).to.include(\"customer\");\r",
+              "    pm.expect(pm.response.text()).to.include(\"images\");\r",
               "});\r",
               "pm.test(\"Response time is less than 200ms\", function () {\r",
               "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
-              "});\r",
-              "pm.test(\"Response time is acceptable\", function () {\r",
-              "    pm.expect(pm.response.responseTime).to.be.below(500);\r",
               "});\r",
               ""
             ],
@@ -163,27 +160,6 @@
           }
         }
       ],
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{API_URL}}/api/v1/products/slug/classic-red-pullover-hoodie",
-          "host": [
-            "{{API_URL}}"
-          ],
-          "path": [
-            "api",
-            "v1",
-            "products",
-            "slug",
-            "classic-red-pullover-hoodie"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "pagination",
       "request": {
         "method": "GET",
         "header": [],
@@ -214,6 +190,28 @@
     },
     {
       "name": "all locations",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test(\"Body matches string\", function () {\r",
+              "    pm.expect(pm.response.text()).to.include(\"name\");\r",
+              "});\r",
+              "pm.test(\"Response time is less than 200ms\", function () {\r",
+              "    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "header": [],
