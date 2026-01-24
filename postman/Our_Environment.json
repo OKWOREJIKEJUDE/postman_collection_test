@@ -1,0 +1,16 @@
+{
+	"id": "101fe0de-0f54-4b53-b47a-843ebe4f2e92",
+	"name": "platizi environment",
+	"values": [
+		{
+			"key": "API_URL",
+			"value": "https://api.escuelajs.co",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"color": null,
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2026-01-23T23:46:09.440Z",
+	"_postman_exported_using": "Postman/11.81.4-260123-0342"
+}
