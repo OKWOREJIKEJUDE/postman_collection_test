@@ -3,7 +3,7 @@ name: Run Postman API Tests
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 jobs:
