@@ -55,8 +55,14 @@ jobs:
         run: |
           curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
 
-      - name: Add Postman CLI to PATH
-        run: echo "$HOME/.postman/bin" >> $GITHUB_PATH
+      - name: Locate Postman CLI and add to PATH
+        run: |
+          echo "Searching for Postman CLI..."
+          find $HOME -type f -name postman || true
+          echo "$(dirname $(find $HOME -type f -name postman | head -n 1))" >> $GITHUB_PATH
+
+      - name: Verify Postman CLI
+        run: postman --version
 
       - name: Login to Postman
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
