@@ -26,7 +26,9 @@
 #           postman collection run postman/Our_Collection.json \
 #           -e postman/Our_Environment.json
 
+
 name: Run Postman API Tests
+
 on:
   push:
     branches:
@@ -52,6 +54,9 @@ jobs:
         if: steps.cache-postman.outputs.cache-hit != 'true'
         run: |
           curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+
+      - name: Add Postman CLI to PATH
+        run: echo "$HOME/.postman/bin" >> $GITHUB_PATH
 
       - name: Login to Postman
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
