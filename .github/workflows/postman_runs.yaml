@@ -1,5 +1,32 @@
-name: Run Postman API Tests
+# name: Run Postman API Tests
 
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
+
+# jobs:
+#   run-postman-tests:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+
+#       - name: Install Postman CLI
+#         run: |
+#           curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+
+#       - name: Login to Postman
+#         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+
+#       - name: Run Postman Collection
+#         run: |
+#           postman collection run postman/Our_Collection.json \
+#           -e postman/Our_Environment.json
+
+name: Run Postman API Tests
 on:
   push:
     branches:
@@ -14,7 +41,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Cache Postman CLI
+        id: cache-postman
+        uses: actions/cache@v4
+        with:
+          path: ~/.postman
+          key: postman-cli-${{ runner.os }}
+
       - name: Install Postman CLI
+        if: steps.cache-postman.outputs.cache-hit != 'true'
         run: |
           curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
 
