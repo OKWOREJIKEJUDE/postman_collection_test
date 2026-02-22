@@ -43,31 +43,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Cache Postman CLI
-        id: cache-postman
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Cache npm dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.postman
-          key: postman-cli-${{ runner.os }}
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-${{ runner.os }}-
 
-      - name: Install Postman CLI
-        if: steps.cache-postman.outputs.cache-hit != 'true'
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run Postman Collection with Newman
         run: |
-          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
-
-      - name: Locate Postman CLI and add to PATH
-        run: |
-          echo "Searching for Postman CLI..."
-          find $HOME -type f -name postman || true
-          echo "$(dirname $(find $HOME -type f -name postman | head -n 1))" >> $GITHUB_PATH
-
-      - name: Verify Postman CLI
-        run: postman --version
-
-      - name: Login to Postman
-        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
-
-      - name: Run Postman Collection
-        run: |
-          postman collection run postman/Our_Collection.json \
+          newman run postman/Our_Collection.json \
           -e postman/Our_Environment.json
