@@ -63,11 +63,12 @@
 #         run: |
 #           newman run postman/Our_Collection.json \
 #           -e postman/Our_Environment.json
-
-
 name: Run Postman API Tests
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -75,38 +76,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout your repo
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      # 2️⃣ Cache Postman CLI (optional, but included)
+      # 1️⃣ Restore cache
       - name: Cache Postman CLI
         id: postman-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v2
         with:
           path: ~/.postman-cli
-          key: postman-cli-${{ runner.os }}-v1
+          key: postman-cli-${{ runner.os }}
 
-      # 3️⃣ Install Postman CLI if not cached
+      # 2️⃣ Install if missing
       - name: Install Postman CLI
         if: steps.postman-cache.outputs.cache-hit != 'true'
         run: |
           curl -o- https://dl-cli.pstmn.io/install/linux64.sh | sh
 
-      # 4️⃣ Add Postman CLI to PATH (needed even if cached)
+      # 3️⃣ Debug: confirm install location
+      - name: Verify Postman CLI files
+        run: |
+          ls -la ~/.postman-cli || echo "Postman CLI folder not found"
+
+      # 4️⃣ Add to PATH (always)
       - name: Add Postman CLI to PATH
         run: echo "$HOME/.postman-cli/bin" >> $GITHUB_PATH
 
-      # 5️⃣ Verify installation
+      # 5️⃣ Verify CLI works
       - name: Verify Postman CLI
         run: postman --version
 
-      # 6️⃣ Login to Postman
+      # 6️⃣ Login
       - name: Login to Postman
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
 
-      # 7️⃣ Run Postman Collection
+      # 7️⃣ Run collection
       - name: Run Postman Collection
         run: |
-          postman collection run postman/Our_Collection.json \
-          -e postman/Our_Environment.json
+          postman collection run postman/Login_collection.json \
+          -e postman/postman_environment.json
