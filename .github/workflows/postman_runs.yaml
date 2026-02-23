@@ -64,12 +64,12 @@
 #           newman run postman/Our_Collection.json \
 #           -e postman/Our_Environment.json
 
+
+
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Run Postman API Tests
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
@@ -77,23 +77,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Cache Postman CLI
         id: postman-cache
         uses: actions/cache@v4
         with:
-          path: ~/.postman-cli
+          path: /usr/local/bin/postman
           key: postman-cli-${{ runner.os }}
 
       - name: Install Postman CLI
         if: steps.postman-cache.outputs.cache-hit != 'true'
         run: |
           curl -o- https://dl-cli.pstmn.io/install/linux64.sh | sh
-
-      - name: Add Postman CLI to PATH
-        run: echo "$HOME/.postman-cli/bin" >> $GITHUB_PATH
 
       - name: Verify Postman CLI
         run: postman --version
