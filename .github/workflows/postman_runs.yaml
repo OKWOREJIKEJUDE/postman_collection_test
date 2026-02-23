@@ -80,12 +80,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 1️⃣ Cache Postman CLI
+      - name: Cache Postman CLI
+        id: postman-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.postman-cli
+          key: postman-cli-${{ runner.os }}
+
       - name: Install Postman CLI
+        if: steps.postman-cache.outputs.cache-hit != 'true'
         run: |
           curl -o- https://dl-cli.pstmn.io/install/linux64.sh | sh
-          echo "$HOME/.postman-cli/bin" >> $GITHUB_PATH
 
-      - name: Verify Postman CLI installation
+      - name: Add Postman CLI to PATH
+        run: echo "$HOME/.postman-cli/bin" >> $GITHUB_PATH
+
+      - name: Verify Postman CLI
         run: postman --version
 
       - name: Login to Postman
