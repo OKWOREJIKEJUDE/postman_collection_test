@@ -80,7 +80,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 1️⃣ Cache Postman CLI
       - name: Cache Postman CLI
         id: postman-cache
         uses: actions/cache@v4
