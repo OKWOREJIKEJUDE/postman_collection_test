@@ -68,7 +68,6 @@
 
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Run Postman API Tests
-
 on:
   workflow_dispatch:
 
