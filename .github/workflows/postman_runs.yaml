@@ -96,9 +96,6 @@ jobs:
       - name: Add Postman CLI to PATH
         run: echo "$HOME/.postman/bin" >> $GITHUB_PATH
 
-      - name: Verify Postman CLI
-        run: postman --version
-
       - name: Login to Postman
         env:
           POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
