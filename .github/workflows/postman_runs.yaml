@@ -27,6 +27,43 @@
 #           -e postman/Our_Environment.json
 
 
+# name: Run Postman API Tests
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
+
+# jobs:
+#   run-postman-tests:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 18
+
+#       - name: Cache npm dependencies
+#         uses: actions/cache@v4
+#         with:
+#           path: ~/.npm
+#           key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+#           restore-keys: |
+#             npm-${{ runner.os }}-
+
+#       - name: Install Newman
+#         run: npm install -g newman
+
+#       - name: Run Postman Collection with Newman
+#         run: |
+#           newman run postman/Our_Collection.json \
+#           -e postman/Our_Environment.json
+
 name: Run Postman API Tests
 
 on:
@@ -43,23 +80,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Cache npm dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            npm-${{ runner.os }}-
-
-      - name: Install Newman
-        run: npm install -g newman
-
-      - name: Run Postman Collection with Newman
+      - name: Install Postman CLI
         run: |
-          newman run postman/Our_Collection.json \
-          -e postman/Our_Environment.json
+          curl -o- https://dl-cli.pstmn.io/install/linux64.sh | sh
+          echo "$HOME/.postman-cli/bin" >> $GITHUB_PATH
+
+      - name: Verify Postman CLI installation
+        run: postman --version
+
+      - name: Login to Postman
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+
+      - name: Run Postman Collection
+        run: |
+          postman collection run postman/Login_collection.json \
+          -e postman/postman_environment.json
