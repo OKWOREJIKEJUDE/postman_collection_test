@@ -104,5 +104,5 @@ jobs:
 
       - name: Run Postman Collection
         run: |
-          postman collection run postman/Login_collection.json \
-          -e postman/postman_environment.json
+          postman collection run postman/Our_Collection.json \
+          -e postman/Our_Environment.json
