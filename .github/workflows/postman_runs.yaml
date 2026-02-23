@@ -63,6 +63,7 @@
 #         run: |
 #           newman run postman/Our_Collection.json \
 #           -e postman/Our_Environment.json
+
 name: Run Postman API Tests
 
 on:
@@ -79,38 +80,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 1️⃣ Restore cache
       - name: Cache Postman CLI
-        id: postman-cache
+        id: cache-postman
         uses: actions/cache@v4
         with:
-          path: ~/.postman-cli
+          path: ~/.postman
           key: postman-cli-${{ runner.os }}
 
-      # 2️⃣ Install if missing
       - name: Install Postman CLI
-        if: steps.postman-cache.outputs.cache-hit != 'true'
+        if: steps.cache-postman.outputs.cache-hit != 'true'
         run: |
-          curl -o- https://dl-cli.pstmn.io/install/linux64.sh | sh
+          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
 
-      # 3️⃣ Debug: confirm install location
-      - name: Verify Postman CLI files
-        run: |
-          ls -la ~/.postman-cli || echo "Postman CLI folder not found"
-
-      # 4️⃣ Add to PATH (always)
-      - name: Add Postman CLI to PATH
-        run: echo "$HOME/.postman-cli/bin" >> $GITHUB_PATH
-
-      # 5️⃣ Verify CLI works
-      - name: Verify Postman CLI
-        run: postman --version
-
-      # 6️⃣ Login
       - name: Login to Postman
         run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
 
-      # 7️⃣ Run collection
       - name: Run Postman Collection
         run: |
           postman collection run postman/Login_collection.json \
