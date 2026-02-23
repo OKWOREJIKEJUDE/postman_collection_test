@@ -64,6 +64,7 @@
 #           newman run postman/Our_Collection.json \
 #           -e postman/Our_Environment.json
 
+
 name: Run Postman API Tests
 
 on:
@@ -90,21 +91,20 @@ jobs:
       - name: Install Postman CLI
         if: steps.cache-postman.outputs.cache-hit != 'true'
         run: |
-          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+          curl -s https://dl-cli.pstmn.io/install/linux64.sh | sh
 
-      - name: Locate Postman CLI and add to PATH
-        run: |
-          echo "Searching for Postman CLI..."
-          find $HOME -type f -name postman || true
-          echo "$(dirname $(find $HOME -type f -name postman | head -n 1))" >> $GITHUB_PATH
+      - name: Add Postman CLI to PATH
+        run: echo "$HOME/.postman/bin" >> $GITHUB_PATH
 
-      # - name: Verify Postman CLI
-      #   run: postman --version
+      - name: Verify Postman CLI
+        run: postman --version
 
       - name: Login to Postman
-        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+        run: postman login --with-api-key $POSTMAN_API_KEY
 
       - name: Run Postman Collection
         run: |
           postman collection run postman/Our_Collection.json \
-          -e postman/Our_Environment.json
+            -e postman/Our_Environment.json
